@@ -1,0 +1,10 @@
+.DS_Store
+.trash/
+.claude/settings.local.json
+
+# obsidian per-machine UI state
+.obsidian/workspace.json
+.obsidian/workspaces.json
+
+# make-md cache
+.makemd/

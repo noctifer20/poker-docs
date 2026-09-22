@@ -1,0 +1,8 @@
+{
+  "propertiesInDocument": "hidden",
+  "alwaysUpdateLinks": true,
+  "useMarkdownLinks": false,
+  "newFileLocation": "folder",
+  "newFileFolderPath": "00_inbox",
+  "attachmentFolderPath": "attachments"
+}
