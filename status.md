@@ -9,13 +9,13 @@ tags: [status]
 > Living snapshot of where the project stands. AI-maintained; overwrite, don't append. History belongs in `01_daily/` and initiative logs.
 
 ## phase
-**v1.0 — build.** v0 closed 2026-09-23 ([[define_vision_and_scope]] done, [[0003_monorepo_structure_and_tech_stack]] accepted). Staged plan agreed on 2026-09-22 ([[0002_staged_delivery_free_play_first]], accepted): v1.0 casual multiplayer → v1.1 private lobbies → v2.0 wallet & crypto (testnet) → v3.0 provable randomness. Nothing built yet; the monorepo is empty. Rules spec in progress; code starts once it lands.
+**v1.0 — build.** v0 closed 2026-09-23 ([[define_vision_and_scope]] done, [[0003_monorepo_structure_and_tech_stack]] accepted). Staged plan agreed on 2026-09-22 ([[0002_staged_delivery_free_play_first]], accepted): v1.0 casual multiplayer → v1.1 private lobbies → v2.0 wallet & crypto (testnet) → v3.0 provable randomness. Nothing built yet; the monorepo is empty. Rules spec not started yet; engine code starts once it lands.
 
 ## current focus
 - [[v1_0_casual_multiplayer_poker]] (active): rules spec in `04_specs/` (`poker-rules-analyst`), then scaffold `../poker-monorepo` per [[0003_monorepo_structure_and_tech_stack]] and build the engine against the spec's test vectors.
 
 ## recent changes
-- 2026-09-23 — owner accepted [[0003_monorepo_structure_and_tech_stack]]; v0 closed, [[define_vision_and_scope]] moved to `past/`; [[v1_0_casual_multiplayer_poker]] set active. Vault's first git commit made. Rules spec dispatched.
+- 2026-09-23 — owner accepted [[0003_monorepo_structure_and_tech_stack]]; v0 closed, [[define_vision_and_scope]] moved to `past/`; [[v1_0_casual_multiplayer_poker]] set active. Vault's first git commit made. Rules-spec dispatch cancelled; picked up in a separate session.
 - 2026-09-23 — grilling session on the vault. Owner fixed the v1.0 exit criterion (**≥1,000 hands without an issue**), engine behaviours (sit-out dealt-in + auto-fold, one timeout sits you out, bounded then removed; top-up between hands to 100bb; both join mechanisms; muck allowed; one-player table waits), hand histories from day one, and the stack (TypeScript only, Turborepo, Socket.IO, in-memory state for v1). Bot player, banned-word list, GTM and hosting region ruled out of v1. [[0003_monorepo_structure_and_tech_stack]] drafted (proposed).
 - 2026-09-22 — first `/owner-review` run: ADR 0002 accepted; vision confirmed; all v1.0 table parameters and v1.1 host/lobby rules answered and recorded in the initiatives.
 - 2026-09-22 — [[awaiting_owner_review]] created as the single queue for owner decisions; wired into `CLAUDE.md` and the session skills. `/owner-review` skill added to walk the queue interactively and apply each resolution.
@@ -27,7 +27,7 @@ tags: [status]
 - Parked until v1.1 ships: randomness scheme, chain/custody ([[randomness_scheme_research]], [[chain_and_custody_research]]).
 
 ## blockers
-- Engine code waits on the rules spec in `04_specs/` (in progress via `poker-rules-analyst`). Scaffolding the monorepo can proceed in parallel.
+- Engine code waits on the rules spec in `04_specs/` (not started; next session, via `poker-rules-analyst`). Scaffolding the monorepo can proceed in parallel.
 
 ## risks
 - **Regulatory/legal:** real-money crypto poker is regulated in most jurisdictions. Deferred to v2.0/v3.0, not retired. **Assumption:** v1.x (free, play chips, no money vocabulary) sits outside gambling regulation — unverified.
