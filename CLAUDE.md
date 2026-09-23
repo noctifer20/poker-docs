@@ -95,6 +95,7 @@ Initiatives also carry `priority: p0…p3` (p0 = drop everything), optional `mil
 | `spec-writer` | turn an accepted ADR into a numbered spec in `04_specs/` |
 | `poker-rules-analyst` | game rules, edge cases, test vectors; checks the protocol actually supports real play |
 | `vault-auditor` | read-only consistency/honesty check of the vault itself |
+| `design-reviewer` | adversarial review of design directions, the Claude Design system, token sets, the ui spec and built screens — before anything goes to the owner for approval |
 
 `/new-decision` calls `fairness-reviewer` automatically when relevant; `/weekly-review` calls `vault-auditor`. Reach for the others whenever their trigger fits, even mid-session.
 

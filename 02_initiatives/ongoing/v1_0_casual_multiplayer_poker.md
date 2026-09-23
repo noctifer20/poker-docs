@@ -58,15 +58,18 @@ Proves the poker engine, the real-time multiplayer plumbing and the table UI bef
 
 ## tasks
 - [x] ADR: monorepo structure & tech stack → [[0003_monorepo_structure_and_tech_stack]] accepted ✅ 2026-09-23
-- [ ] Rules spec in `04_specs/` with numbered requirements + test vectors (`poker-rules-analyst`) — includes button rule, heads-up blinds, min-raise, side pots, odd chip, both entry mechanisms, sit-out/timeout behaviour
-- [ ] Engine: rules, hand evaluator, betting state machine, tests (`poker-rules-analyst` for edge cases and test vectors)
-- [ ] Keep the shuffle behind a single interface — cheap insurance for v3.0
-- [ ] Real-time server (Socket.IO): tables, seats, turn order, timeouts, sit-out → auto-removal, disconnect/reconnect
-- [ ] Hand-history log from the first hand (`HandHistorySink`, append-only)
+- [x] Rules spec in `04_specs/` with numbered requirements + test vectors (`poker-rules-analyst`) → [[nlhe_cash_game_rules]] ✅ 2026-09-23 — includes button rule, heads-up blinds, min-raise, side pots, odd chip, both entry mechanisms, sit-out/timeout behaviour
+- [x] Scaffold `../poker-monorepo` per [[0003_monorepo_structure_and_tech_stack]] ✅ 2026-09-23 — Turborepo + pnpm workspace live, `pnpm install/build/test/lint` all pass; see log for layout and deviations
+- [ ] Engine: hand evaluator, betting state machine implemented against [[nlhe_cash_game_rules]]'s R1–R54 and its 9 test vectors (currently stubbed as "not implemented" in `packages/engine`)
+  - [x] Hand evaluation (R4–R7), min-raise/short-all-in mechanics (R20–R26), side-pot construction + odd-chip rule (R27–R31), dead-button/heads-up assignment (R14–R19) ✅ 2026-09-23 — pure, no-IO, in `packages/engine/src/{hand-evaluator,betting-state-machine,pots,button}.ts`; 25 Vitest tests covering TV-1 through TV-8; `pnpm build/test/lint` all green. Committed `fc9d0fd` (no remote yet).
+  - [ ] Hand-lifecycle orchestration (single-remaining-player win w/o showdown, street progression, void-hand detection R52–R54) — not yet built; belongs at a layer above the pure betting/pot modules, likely where the server's game loop calls into the engine
+- [ ] Keep the shuffle behind a single interface — cheap insurance for v3.0 (interface + CSPRNG implementation scaffolded in `packages/engine/src/shuffler.ts`; done, no further action unless v3.0 needs a new implementation)
+- [ ] Real-time server (Socket.IO): tables, seats, turn order, timeouts, sit-out → auto-removal, disconnect/reconnect (health check + Socket.IO boot scaffolded in `apps/server`; table/matchmaking logic not yet built)
+- [ ] Hand-history log from the first hand (`HandHistorySink`, append-only) (interface + JSONL implementation scaffolded in `apps/server/src/hand-history-sink.ts`; rotation left as a TODO)
 - [ ] Hand counter: track hands completed toward the 1,000-hand exit criterion
-- [ ] Table UI, mobile-first
+- [ ] Table UI, mobile-first (placeholder page + Socket.IO client wired in `apps/web`; no real table screen yet) — built from the design system in [[ui_design_system]], not before it
 - [ ] On-demand public table matchmaking by blinds level
-- [ ] Deploy somewhere people can reach
+- [ ] Deploy somewhere people can reach (no Dockerfile yet)
 
 ## open questions
 <!-- not decided — ask the owner before assuming -->
@@ -77,7 +80,7 @@ Proves the poker engine, the real-time multiplayer plumbing and the table UI bef
 - [[0003_monorepo_structure_and_tech_stack]] (accepted 2026-09-23)
 
 ## related
-[[roadmap]] · [[vision]] · [[v1_1_private_lobbies_for_friends]] · [[glossary]]
+[[roadmap]] · [[vision]] · [[v1_1_private_lobbies_for_friends]] · [[glossary]] · [[nlhe_cash_game_rules]]
 
 ## log
 - 2026-09-22 — created from the owner's staging brief. Variant (NLHE cash-game), platform (mobile-first web), identity (nickname only) and matchmaking (on-demand public tables by blinds level) confirmed with the owner.
@@ -85,3 +88,6 @@ Proves the poker engine, the real-time multiplayer plumbing and the table UI bef
 - 2026-09-22 — owner answered: disconnected players sit out with seat held ~2 min; no spectators in v1.0; self-hosted on a small VPS/PaaS (to be fixed in the stack ADR).
 - 2026-09-23 — [[0003_monorepo_structure_and_tech_stack]] accepted; initiative set **active**. Rules spec dispatch cancelled by the owner mid-session; to be done in a separate session.
 - 2026-09-23 — grilling session. Owner set the exit criterion (≥1,000 hands without an issue), sit-out rules (dealt in + auto-fold, one timeout sits you out, bounded then removed), top-up reading, both join mechanisms, muck allowed, one-player table waits indefinitely, hand histories from day one, no bot, no banned-word list, GTM out of scope, hosting region irrelevant. Stack fixed: TypeScript only, Turborepo, Socket.IO, in-memory state for v1. [[0003_monorepo_structure_and_tech_stack]] drafted.
+- 2026-09-23 — `poker-rules-analyst` wrote the NLHE cash-game rules spec → [[nlhe_cash_game_rules]] (status: draft). Numbered requirements (R1–R54) + 9 test vectors covering hand-ranking ties, 2-way and 3-way side pots, heads-up order, min-raise/short-all-in edge cases, dead-button movement, and timeout/sit-out. Made the engine-level calls the initiative left open: dead button (not moving), heads-up SB-acts-first-preflop-last-postflop, TDA-style min-raise/incomplete-all-in mechanics, layered side-pot construction with odd-chip-to-left-of-button. Surfaced a new owner question (top-up opt-in vs. automatic) and a non-blocking protocol-fit note for [[v3_0_provable_randomness]] (mucked hands may never be revealable for future shuffle verification).
+- 2026-09-23 — `../poker-monorepo` scaffolded per [[0003_monorepo_structure_and_tech_stack]] (run in parallel with the rules-spec work above). Turborepo + pnpm workspace initialized as its own git repo (first commit made); `apps/web` (React + Vite + Socket.IO client placeholder), `apps/server` (Express + Socket.IO, `/healthz`, `TableStore` interface + in-memory implementation, `HandHistorySink` interface + JSONL implementation), `packages/engine` (`Card`/`Deck` types, `Shuffler` interface + CSPRNG implementation, hand-evaluator/betting-state-machine left as "not implemented" stubs pending the rules spec above), `packages/protocol` (placeholder client↔server/event types), `packages/config` (shared tsconfig/eslint/prettier). `pnpm install`, `build`, `test`, and `lint` verified passing; `pnpm dev` verified live (server health check + Vite dev server both responded). Deviations from the ADR, all minor: `apps/web` hand-written rather than via `pnpm create vite` (avoids clashing with `packages/config` presets); `engine`/`protocol` consumed from TS source rather than compiled `dist`; `protocol` duplicates a small `Card`/`Suit`/`Rank` type instead of depending on `engine` (keeps it dependency-free); server uses Express instead of raw `node:http` for the thin HTTP layer; no `Dockerfile` yet. None of these need an ADR amendment — all fall within "framework picks are recommendations" in [[0003_monorepo_structure_and_tech_stack]].
+- 2026-09-23 — Dispatched a fresh subagent to implement the engine's pure game logic against [[nlhe_cash_game_rules]] (scoped to `packages/engine` only — no server/timer/session work). Delivered: `hand-evaluator.ts` (best-5-of-7, R4–R7), extended `betting-state-machine.ts` (min-raise/short-all-in/reopening mechanics, R20–R26), new `pots.ts` (layered side pots + odd-chip rule, R27–R31), new `button.ts` (dead-button + heads-up assignment, R14–R19), small `card.ts` additions (`rankValue`, R3's `isValidStandardDeck`). 25 Vitest tests covering TV-1 through TV-8, including explicit chip-conservation assertions on TV-4/TV-5. Verified independently (re-ran `pnpm build/test/lint` myself, spot-read `hand-evaluator.ts` and `pots.ts`) — all green, logic checks out. **Left uncommitted** in `poker-monorepo` pending review. Judgment calls made by the agent, flagged not silently assumed: heads-up button alternates hand-to-hand between the two occupied seats (R16/R17 doesn't specify this — standard convention used); `BettingAction.amount` is a "raise to X" total, not a delta; hand-end/orchestration (single-remaining-player win, void-hand abort) deliberately left out as a higher-layer concern, not built here.

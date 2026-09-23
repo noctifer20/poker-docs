@@ -25,6 +25,7 @@ Stage-by-stage plan agreed with the owner on 2026-09-22 (decision: [[0002_staged
 
 ## now
 - [[v1_0_casual_multiplayer_poker]]
+- [[ui_design_system]] — v1.0 design system (research → directions → Claude Design prototype → ground-rules spec); feeds the v1.0 table UI
 
 ## next
 - [[v1_1_private_lobbies_for_friends]]
