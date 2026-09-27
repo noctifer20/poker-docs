@@ -36,7 +36,7 @@ tags: [status]
 - 2026-09-22 — workspace scaffolded (`poker-docs`, empty `poker-monorepo`); see [[0001_split_docs_vault_and_code_monorepo]].
 
 ## decisions
-- Accepted: [[0004_design_system_in_code]] (2026-09-24: repo canonical, `packages/ui`, Claude Design frozen as v1.0 reference) · [[0001_split_docs_vault_and_code_monorepo]], [[0002_staged_delivery_free_play_first]], [[0003_monorepo_structure_and_tech_stack]] (TypeScript only, Turborepo, Socket.IO, in-memory state for v1; hosting: small VPS/PaaS, provider at deploy time)
+- Accepted: [[0005_hosting_dokploy_behind_cloudflare]] (2026-09-27: Dokploy on the owner's VPS, `poker.noctifer20.com` behind the Cloudflare proxy, manual deploys, one replica) · [[0004_design_system_in_code]] (2026-09-24: repo canonical, `packages/ui`, Claude Design frozen as v1.0 reference) · [[0001_split_docs_vault_and_code_monorepo]], [[0002_staged_delivery_free_play_first]], [[0003_monorepo_structure_and_tech_stack]] (TypeScript only, Turborepo, Socket.IO, in-memory state for v1; hosting: small VPS/PaaS, provider at deploy time)
 - Parked until v1.1 ships: randomness scheme, chain/custody ([[randomness_scheme_research]], [[chain_and_custody_research]]).
 
 ## blockers
@@ -53,7 +53,7 @@ tags: [status]
 ## next actions
 0. Owner smoke-tested the local build 2026-09-26 (no findings reported); a longer hands-on session can feed tasks.
 1. Both bugs from [[code_docs_verification_2026_09_26]] are fixed on `main`; triage the rest of that note into tasks (`/triage-inbox`). Web gaps: in-hand side pots, next-hand countdown, timer/grace lengths in the protocol.
-2. Fix the built server start (engine package entry) → Dockerfile/deploy + README; server hardening (CORS, rate/payload limits, JSONL rotation); CI (Linux screenshot baselines).
+2. Deploy track per [[0005_hosting_dokploy_behind_cloudflare]], using the monorepo agents `platform-engineer` (fix the built server start → Dockerfile + README runbook → CI with Linux screenshot baselines) and `security-reviewer` (CORS, rate/payload limits, proxy/IP trust, hole-card leaks) before the first public deploy; JSONL rotation on a persistent volume.
 3. Spec revision of [[nlhe_cash_game_rules]] (`poker-rules-analyst`): fix R30, write engine + server ASSUMPTIONs into rules, add TV-R23-cumulative, clarify R23 wording, apply the R42 answer. Engine gap: R10 voluntary show. Server gap: R38 manual sit-out.
 4. Testers toward the 1,000-hand exit; manual VoiceOver/TalkBack pass before testers.
 5. Owner: answer R42; define *success looks like* in [[vision]] (deferred twice).

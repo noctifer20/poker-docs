@@ -41,6 +41,7 @@ First version with a real use case and real users: groups who want to play poker
 - [ ] Host controls implemented
 - [ ] Mobile UX pass for same-room play
 - [ ] Real-world test: one home game with friends, notes captured to `00_inbox/`
+- [ ] Maintenance/drain mode so redeploys don't void live hands: from a set time no new sessions or seats are accepted (with an in-app notice), running tables finish their hands, then the server can be redeployed. Owner, 2026-09-27: needed after v1.0; see [[0005_hosting_dokploy_behind_cloudflare]].
 
 ## open questions
 <!-- not decided — ask the owner before assuming -->
@@ -56,3 +57,4 @@ First version with a real use case and real users: groups who want to play poker
 - 2026-09-22 — created from the owner's staging brief ("replace a physical poker set").
 - 2026-09-22 — owner answered (via `/owner-review`): host sets custom blinds (+ optional increase schedule), stack, seats, timer; mid-game host can pause and kick only; lobby lives while non-empty, host role passes on leave, host must play.
 - 2026-09-23 — entry gate fixed by the owner: v1.1 starts only after v1.0 has ≥1,000 hands played without an issue. Persistent game state (Redis-like) is planned for after v1.0; same-room play is the likely trigger.
+- 2026-09-27 — task added: maintenance/drain mode before redeploys (owner accepted deploys killing tables for v1.0 only).

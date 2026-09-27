@@ -97,6 +97,7 @@ Proves the poker engine, the real-time multiplayer plumbing and the table UI bef
 ## decisions
 - [[0002_staged_delivery_free_play_first]] (accepted 2026-09-22)
 - [[0003_monorepo_structure_and_tech_stack]] (accepted 2026-09-23)
+- [[0005_hosting_dokploy_behind_cloudflare]] (accepted 2026-09-27)
 
 ## related
 [[roadmap]] · [[vision]] · [[v1_1_private_lobbies_for_friends]] · [[glossary]] · [[nlhe_cash_game_rules]]
@@ -121,3 +122,5 @@ Proves the poker engine, the real-time multiplayer plumbing and the table UI bef
 - 2026-09-26 — owner approved; `feat/web-table` merged into `main` (`15c2856`), worktree `../poker-monorepo-web` removed. Local dev instance started for the owner's first hands-on test.
 - 2026-09-26 — subagent fixed the 3→2 double big blind on `fix/heads-up-transition-bb` (worktree `../poker-monorepo-bb`, not merged): heads-up BB = next occupied seat after the previous BB (one rule for alternation, 3+→2, 2→3+, replacement); written into [[nlhe_cash_game_rules]] as R16.1. Server unchanged (`planHand` already passes the last assignment; wait-for-BB check uses the same function). Tests: engine 74 → 88 (all 3→2 variants, 2→3, replacement, seeded 2,000-run property test: between two BBs by P, every player seated throughout posts exactly one BB), server 40 → 43 (original scenario fails on old engine). Verified myself: forced build/test/lint 15/15, read the diff. ASSUMPTION → owner question (remaining heads-up player can post SB twice running). Noticed: busted top-up may skip a BB; no root Prettier config.
 - 2026-09-26 — owner approved; `fix/heads-up-transition-bb` merged into `main` (`ff424a5`), worktree removed; green on the merged tree (engine 88, server 43, ui 354, web 98). R16.1 edge case queued for the owner.
+- 2026-09-27 — deploy planning: owner chose one subdomain of `noctifer20.com`, Cloudflare proxy on, Dokploy on their VPS; deploys voiding live tables accepted for v1.0 (drain mode tracked in [[v1_1_private_lobbies_for_friends]]). Drafted [[0005_hosting_dokploy_behind_cloudflare]] (proposed). Added two monorepo agents in `../poker-monorepo/.claude/agents/`: `platform-engineer` (build/Docker/CI/deploy) and `security-reviewer` (read-only server/deploy review). Vault got a git remote and its first push (`2e8e269`).
+- 2026-09-27 — owner accepted [[0005_hosting_dokploy_behind_cloudflare]]; subdomain confirmed as `poker.noctifer20.com`.

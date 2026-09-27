@@ -97,6 +97,8 @@ Initiatives also carry `priority: p0…p3` (p0 = drop everything), optional `mil
 | `vault-auditor` | read-only consistency/honesty check of the vault itself |
 | `design-reviewer` | adversarial review of design directions, the Claude Design system, token sets, the ui spec and built screens — before anything goes to the owner for approval |
 
+Code-side agents live in `../poker-monorepo/.claude/agents/` (they load when Claude runs from the monorepo): `platform-engineer` (build, Docker, CI, Dokploy/Cloudflare deploy runbooks — branches only, never deploys) and `security-reviewer` (read-only review of the server's attack surface and deploy config, before any deploy that touches them).
+
 `/new-decision` calls `fairness-reviewer` automatically when relevant; `/weekly-review` calls `vault-auditor`. Reach for the others whenever their trigger fits, even mid-session.
 
 ## code repo

@@ -1,6 +1,6 @@
 ---
 type: review_queue
-updated: 2026-09-26
+updated: 2026-09-27
 tags: [review]
 ---
 
@@ -27,6 +27,7 @@ tags: [review]
 
 ## resolved recently
 <!-- move ticked items here with the date, keep the last ~10, then drop -->
+- [x] [[0005_hosting_dokploy_behind_cloudflare]] — resolved 2026-09-27: accepted, subdomain `poker.noctifer20.com`
 - [x] `fix/heads-up-transition-bb` merge — resolved 2026-09-26: merged (`ff424a5`)
 - [x] `feat/web-table` merge — resolved 2026-09-26: merged (`15c2856`)
 - [x] [[design_system_ground_rules]] — nickname limit 16 — resolved 2026-09-25: confirmed
@@ -36,6 +37,3 @@ tags: [review]
 - [x] [[v1_0_casual_multiplayer_poker]] — sit-out grace period — resolved 2026-09-25: 2 minutes
 - [x] [[v1_0_casual_multiplayer_poker]] — banned-word list — resolved 2026-09-25: none
 - [x] [[nlhe_cash_game_rules]] — R8 uncontested wins — resolved 2026-09-25: hidden
-- [x] [[nlhe_cash_game_rules]] — R23 cumulative short all-ins — resolved 2026-09-25: TDA
-- [x] [[nlhe_cash_game_rules]] — top-up opt-in vs automatic — resolved 2026-09-25: opt-in
-- [x] [[0004_design_system_in_code]] — resolved 2026-09-24: accepted
