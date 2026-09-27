@@ -3,7 +3,7 @@ type: spec
 status: review
 area: ui
 created: 2026-09-23
-updated: 2026-09-24
+updated: 2026-09-25
 tags: [spec, ui, design-system]
 ---
 
@@ -40,12 +40,12 @@ The requirements below are the *fixed* layer: later versions (v1.1 lobbies, v2.0
 ### type & numbers
 - **UI-R12** Every number that changes in place (stack, bet, pot, timer, hand number) MUST use tabular lining figures.
 - **UI-R13** Fonts MUST be licensed for web embedding (OFL or equivalent) and self-hostable. Starting pair: **Barlow** (UI) and **Barlow Semi Condensed** (seat labels, buttons, headings) — both verified to ship `tnum` (Google Fonts files, checked 2026-09-23).
-- **UI-R14** Every glyph on the table — including badges, the dealer button and card indices — MUST render at ≥ 11px. Face-up cards at seats show the rank at ≥ 13px bold and the suit at ≥ 11px.
-- **UI-R15** Nicknames are at most 16 characters (product-wide). Nickname + stack MUST fit a seat at 9-max on the reference viewport; nicknames truncate with an ellipsis, stacks never truncate.
+- **UI-R14** Every glyph on the table — including badges, the dealer button and card indices — MUST render at ≥ 11px. Face-up cards at seats show the rank at ≥ 13px bold and the suit at ≥ 11px. These sizes are measured on the 360×640 reference drawing (UI-R17); on narrower screens the uniform scale renders them smaller (≈9.4px for 11px at 320px wide), which is accepted — pinch-zoom and the tap-a-seat sheet cover readability (owner, 2026-09-25).
+- **UI-R15** Nicknames are at most 16 characters (product-wide; owner confirmed 2026-09-25). Nickname + stack MUST fit a seat at 9-max on the reference viewport; nicknames truncate with an ellipsis, stacks never truncate.
 - **UI-R16** Chip amounts show in full with thousands separators up to 99,999 and abbreviate above that (e.g. 124.5k, rounded down) on seats, bet markers and the pot. Action buttons, the bet-sizer input and amount-change notices MUST always show the exact full number.
 
 ### layout & interaction
-- **UI-R17** Phone portrait is the primary layout. The table surface is drawn at a **360×640 reference** and MUST be scaled uniformly to fit the width and the height left after the safe-area insets, centred, with the top bar and action bar full-width; the table never scrolls. Every requirement below that names 360×640 is measured on that reference drawing. Landscape/desktop is a second layout of the same components, not a different design.
+- **UI-R17** Phone portrait is the primary layout. The table surface is drawn at a **360×640 reference** and MUST be scaled uniformly to fit the width and the height left after the safe-area insets, centred, with the top bar and action bar full-width; the table never scrolls. Every requirement below that names 360×640 is measured on that reference drawing. Landscape/desktop is a second layout of the same components, not a different design. **v1.0 is portrait-only on phones:** in landscape orientation a phone shows a "rotate your phone" prompt instead of the table (owner, 2026-09-25); a landscape phone layout is out of v1.0 scope.
 - **UI-R18** At 9-max on the reference viewport, all 9 seats with a bet out, a full 5-card board and a multiway showdown with face-up seat cards MUST be shown without overlap, and seats sit ≥ 8px from the screen edge.
 - **UI-R19** The action bar (fold / check / call / bet / raise and bet sizing) sits in the bottom thumb zone. Primary action targets are ≥ 44×44px; no target is smaller than 24×24px (WCAG 2.5.8).
 - **UI-R20** Fold MUST be separated from Check/Call by a gap of ≥ 16px or distinct placement.
@@ -357,10 +357,8 @@ Not a fairness spec; the relevant failure modes are *player* harm, not cheating:
 
 ## open questions
 - **Pre-actions** ("check/fold", "call any" boxes while waiting): common in online poker, not in v1.0 scope. Left out unless the owner adds them — UI-R22 applies if they are.
-- **Top-up: opt-in or automatic?** still open in [[awaiting_owner_review]]; screen 12 assumes opt-in.
 - **Signature element** — owner picks from Claude Design's 2–3 options.
 - **Suit colours** that pass UI-R9's SHOULD under all three simulations — none found yet; iterate in Claude Design.
-- **Nickname limit** of 16 characters is a design proposal; confirm with the engine/server (no limit is set in [[nlhe_cash_game_rules]]).
 
 ## references
 [[ui_design_system]] · [[poker_ui_competitors_and_table_layouts]] · [[ui_visual_foundations]] · [[nlhe_cash_game_rules]] · [[v1_0_casual_multiplayer_poker]] · [Table directions](https://claude.ai/artifact/SyXGGC8R5Xbpbbm33mtZxg)
