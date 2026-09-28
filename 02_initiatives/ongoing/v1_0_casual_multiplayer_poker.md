@@ -27,6 +27,7 @@ Proves the poker engine, the real-time multiplayer plumbing and the table UI bef
 - table lifecycle (owner, 2026-09-23): a hand needs two seated players; a table that drops to one player **waits indefinitely**
 - showdown (owner, 2026-09-23): players holding a **losing hand may muck** it; the winning hand is shown
 - hand histories (owner, 2026-09-23): **every completed hand is logged from day one** — the only way to notice engine bugs in real play, and the raw data v3.0 verification will need. No personal data beyond nicknames
+- playtest feedback round 1 (owner, 2026-09-28): the changes from [[playtest_feedback_2026_09_28]] are **part of v1.0** — paced and highlighted dealing / betting / showdown (UI-R37), sound effects and vibration on by default (UI-R38), seat vs felt separation, card size. Chip visuals stay out (UI-R4 kept). Work tracked in [[ui_design_system]]
 - **no spectators** in v1.0 — only seated players see a table (revisit for [[v1_1_private_lobbies_for_friends]])
 - hosting (owner, 2026-09-22): **self-hosted by the owner on a small VPS/PaaS instance**, region chosen by where the first players are; provider and region fixed in the monorepo structure & tech stack ADR
 - matchmaking: public tables **on demand** — the player picks a blinds level; they join a table at that level with a free seat, otherwise a new table is created
@@ -49,6 +50,7 @@ Proves the poker engine, the real-time multiplayer plumbing and the table UI bef
 
 ## done when
 - [ ] **exit criterion (owner, 2026-09-23): at least 1,000 hands played without an issue** — proves the engine and the game state machine; nothing else gates the move to [[v1_1_private_lobbies_for_friends]]
+- [ ] playtest feedback round 1 is addressed: every task under that heading in [[ui_design_system]] is ticked (owner, 2026-09-28 — this adds to the 1,000-hand exit criterion above)
 - [ ] a player on a phone can join a public table by blinds level and play hands to showdown against other live players
 - [ ] a new table is created automatically when no seat is free at the chosen blinds level
 - [ ] engine test suite covers hand ranking, betting rounds, side pots, all-in and showdown edge cases (test vectors from `poker-rules-analyst`)
@@ -73,11 +75,11 @@ Proves the poker engine, the real-time multiplayer plumbing and the table UI bef
 - [ ] Keep the shuffle behind a single interface — cheap insurance for v3.0 (interface + CSPRNG implementation scaffolded in `packages/engine/src/shuffler.ts`; done, no further action unless v3.0 needs a new implementation)
 - [x] Real-time server (Socket.IO): tables, seats, turn order, timeouts, sit-out → auto-removal, disconnect/reconnect ✅ 2026-09-26 (`feat/server-game-loop`, `e0981b6`; merged `0ceb3b0`)
 - [x] Merge `feat/server-game-loop` into `main` ✅ 2026-09-26 (`0ceb3b0`)
-- [ ] Fix the built server: `node dist/index.js` can't import `@poker/engine` (TS-source entry with `.js` imports) — broken on `main` too; blocks deploy ⏫
+- [x] Fix the built server: `node dist/index.js` can't import `@poker/engine` (TS-source entry with `.js` imports) ✅ 2026-09-27 — esbuild bundles `@poker/*` into `dist/index.js` (`eb0d4e1`)
 - [ ] Server: manual sit-out toggle (R38) — R38 says v1.0 has none; see [[code_docs_verification_2026_09_26]] (change entry option after joining: done on `feat/web-table`, `table:entry`)
-- [ ] Server hardening before public testers: CORS (currently `*`), rate/payload limits on socket commands, JSONL rotation
+- [x] Server hardening before public testers: CORS, rate/payload limits on socket commands, JSONL rotation ✅ 2026-09-27 — origin lock, Cloudflare-aware client IP, payload/event/connection limits, seat/table caps, 64 MiB history rotation (`19ab687`, `4a1694a`); `security-reviewer`: ship with conditions
 - [ ] Reconcile leaving mid-hand: R42 says treat as disconnect (check-or-fold), server always folds (owner question in [[awaiting_owner_review]])
-- [x] Hand-history log from the first hand (`HandHistorySink`, append-only) ✅ 2026-09-26 — every completed/voided hand written in full (R48); rotation still a TODO (hardening task above)
+- [x] Hand-history log from the first hand (`HandHistorySink`, append-only) ✅ 2026-09-26 — every completed/voided hand written in full (R48); 64 MiB rotation added 2026-09-27
 - [x] Hand counter: track hands completed toward the 1,000-hand exit criterion ✅ 2026-09-26 — global + per-table on `/healthz`; in-memory, resets on restart (JSONL line count is the durable number); counts hands vs auto-folding sat-out players, and voided hands separately
 - [x] Table UI, mobile-first — `apps/web` table screen composed from `@poker/ui` ✅ 2026-09-26 (`feat/web-table`, merged `15c2856`)
 - [x] Merge `feat/web-table` into `main` ✅ 2026-09-26 (`15c2856`)
@@ -88,7 +90,20 @@ Proves the poker engine, the real-time multiplayer plumbing and the table UI bef
 - [x] Merge `fix/heads-up-transition-bb` into `main` ✅ 2026-09-26 (`ff424a5`)
 - [ ] Check R14/R41: a busted player who tops up rejoins the rotation directly (not wait-for-BB) and may skip a big blind
 - [ ] Repo: add a root Prettier config pointing at `packages/config` preset (width 100) before any repo-wide format
-- [ ] Deploy somewhere people can reach (no Dockerfile yet)
+- [x] Deploy somewhere people can reach ✅ 2026-09-27 — https://poker.noctifer20.com per [[0005_hosting_dokploy_behind_cloudflare]] (Dockerfile `f4f676f`, deployed from `fda7539`)
+- [ ] **S1** capacity lockout: drop never-dealt disconnected players at once; per-/48 seat + open-connection caps; 6 seats per IPv4 — gates sharing the URL beyond private testers ⏫
+- [ ] **S2** hand history can fill the shared disk: free-space floor that stops writes, counts failures, logs once (delete nothing — owner's choice) + host disk alert — gates sharing the URL beyond private testers ⏫
+- [ ] `security-reviewer` pass on the deployed config after S1/S2
+- [ ] Make production's container log rotation survive redeploys (re-applied by hand after every Dokploy redeploy — see [[status]]; poker-dev's timer re-applies its own)
+- [x] Repo side of the `dev` review environment ✅ 2026-09-29 — branch `dev`, `.github/workflows/dev.yml`, README "environments & branches" ([[0006_dev_review_environment]])
+- [x] poker-dev live ✅ 2026-09-29 — Dokploy app + Cloudflare edge + VPS deploy timer, verified end to end on `9175ad9`
+- [ ] `security-reviewer` pass on the poker-dev setup (timer, keys, origin lock)
+- [ ] Fix flaky `apps/server/test/socket-server.test.ts` ("stale-hand" race) — a red run holds back the dev deploy
+- [ ] Merge `infra/dev-environment` into `main` (workflow, README, `deploy/dev-poller/`)
+- [x] First change on poker-dev: `feat/playtest-feedback-1` merged into `dev` ✅ 2026-09-29 (`315852b`); owner review pending
+- [ ] Back up the `poker-data` volume — hand histories are the 1,000-hand exit evidence (ADR 0005 consequences)
+- [ ] A private way to read hand progress toward 1,000 (public `/healthz` now returns status only)
+- [ ] Pace (playtest F3, UI-R37): owner named showdown, dealing and bet / raise / call (2026-09-28). Decide where pacing lives — client plays events in sequence, or the server spaces them — and make sure the 30s turn timer never runs before the player can see it is their turn
 
 ## open questions
 <!-- not decided — ask the owner before assuming -->
@@ -98,6 +113,7 @@ Proves the poker engine, the real-time multiplayer plumbing and the table UI bef
 - [[0002_staged_delivery_free_play_first]] (accepted 2026-09-22)
 - [[0003_monorepo_structure_and_tech_stack]] (accepted 2026-09-23)
 - [[0005_hosting_dokploy_behind_cloudflare]] (accepted 2026-09-27)
+- [[0006_dev_review_environment]] (proposed 2026-09-29)
 
 ## related
 [[roadmap]] · [[vision]] · [[v1_1_private_lobbies_for_friends]] · [[glossary]] · [[nlhe_cash_game_rules]]
@@ -124,3 +140,9 @@ Proves the poker engine, the real-time multiplayer plumbing and the table UI bef
 - 2026-09-26 — owner approved; `fix/heads-up-transition-bb` merged into `main` (`ff424a5`), worktree removed; green on the merged tree (engine 88, server 43, ui 354, web 98). R16.1 edge case queued for the owner.
 - 2026-09-27 — deploy planning: owner chose one subdomain of `noctifer20.com`, Cloudflare proxy on, Dokploy on their VPS; deploys voiding live tables accepted for v1.0 (drain mode tracked in [[v1_1_private_lobbies_for_friends]]). Drafted [[0005_hosting_dokploy_behind_cloudflare]] (proposed). Added two monorepo agents in `../poker-monorepo/.claude/agents/`: `platform-engineer` (build/Docker/CI/deploy) and `security-reviewer` (read-only server/deploy review). Vault got a git remote and its first push (`2e8e269`).
 - 2026-09-27 — owner accepted [[0005_hosting_dokploy_behind_cloudflare]]; subdomain confirmed as `poker.noctifer20.com`.
+- 2026-09-27 — **first production deploy** (monorepo session: `platform-engineer` + `security-reviewer`, finished in manual permission mode). Built server fixed (esbuild bundle), multi-stage non-root Dockerfile, ADR 0005 security baseline; security review block → fixed → ship with conditions; merged `fda7539`. Dokploy app `poker-server-qf1lpm` (1 replica, 512 MB, named volume `poker-data`, manual deploys); Cloudflare proxied record, per-host Full (strict), Origin CA cert, Authenticated Origin Pulls required, Traefik Cloudflare allow-list + proxy secret. Smoke checks passed, two clients played a hand through Cloudflare. Closed a publicly reachable Dokploy admin panel on the way. Open: S1/S2 (above) before sharing beyond private testers. Infra IDs and runbook in the owner's org vault, not here.
+- 2026-09-28 — reality check from the workspace root: forced `turbo run build test lint` 15/15 green on `fda7539` (engine 88, server 88, ui 354, web 99); `https://poker.noctifer20.com` and `/healthz` answer. Ticked the build-fix, hardening and deploy tasks the deploy session left open; added S1/S2 and the deploy follow-ups as tasks.
+- 2026-09-28 — first player feedback recorded in [[playtest_feedback_2026_09_28]]; mostly table look and feel (tasks in [[ui_design_system]]). One server-side item: pace (F3).
+- 2026-09-28 — owner: playtest feedback round 1 is part of v1.0. Scope and *done when* extended; the exit criterion line said "nothing else gates v1.0" — this decision adds a second gate.
+- 2026-09-29 — owner asked for a `dev` branch that deploys itself and a review-on-dev-first convention. Repo side done: `dev` created from `main` (`fda7539`) and pushed; `infra/dev-environment` (`15ccb70`: `.github/workflows/dev.yml`, README "environments & branches", `.env.example`, `platform-engineer` rule) merged into `dev` (`63600d3`). Hostname `poker-dev.noctifer20.com` — `dev.poker.` would need Cloudflare ACM (owner chose the free name). Drafted [[0006_dev_review_environment]] (proposed). First GitHub Actions run on `dev`: build/test/lint **green on Linux** (run 36489152176) — the repo's first CI run; deploy job skipped as intended. Deploy job stays off until the owner's Dokploy/Cloudflare/GitHub steps are done.
+- 2026-09-29 — poker-dev built end to end by script (owner's instruction, manual permission mode), using the owner's org-vault server notes. The panel is tailnet-only, so GitHub doesn't call Dokploy: CI fast-forwards `dev-deploy` after checks; a systemd timer on the VPS (`deploy/dev-poller/`, own read-only deploy key) queues the deploy on the local API and re-applies log rotation. Dokploy: env `dev`, app `poker-server-dev`, volume `poker-dev-data`, own proxy secret. Cloudflare: proxied record, own config rule, Origin CA cert, AOP with the existing client cert. Commits `5fa1079`, merged into `dev` as `9175ad9`. The first run went red on a flaky server test (`socket-server.test.ts` stale-hand); the rerun was green and deployed. Smoke checks pass; production untouched. Ids in the org vault.

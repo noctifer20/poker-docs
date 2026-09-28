@@ -103,7 +103,9 @@ Code-side agents live in `../poker-monorepo/.claude/agents/` (they load when Cla
 
 ## code repo
 
-`../poker-monorepo` — the source code monorepo (currently empty; structure decided later, record it in an ADR). This vault is git-tracked separately from it. When work spans both, do the code in the monorepo and record the outcome (initiative log, status, ADR) here.
+`../poker-monorepo` — the source code monorepo (structure in [[0003_monorepo_structure_and_tech_stack]]). This vault is git-tracked separately from it. When work spans both, do the code in the monorepo and record the outcome (initiative log, status, ADR) here.
+
+**Branches & environments** ([[0006_dev_review_environment]]): `main` = production (`poker.noctifer20.com`, deployed by hand); `dev` = review (`poker-dev.noctifer20.com`, deploys itself on every push after build/test/lint). **Every change I need to look at goes to `dev` first**: branch off `main` → merge into `dev` → I review on poker-dev → approved: merge the *feature branch* into `main` (then `main` back into `dev`); rejected: revert the merge on `dev`. Never force-push or reset `dev`. Changes with no visible effect (docs, tests, refactors) may go straight to `main`. When a change is waiting on my review, the [[awaiting_owner_review]] line says "on poker-dev" and names the branch.
 
 ## git & backup
 

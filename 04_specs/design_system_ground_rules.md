@@ -3,7 +3,7 @@ type: spec
 status: review
 area: ui
 created: 2026-09-23
-updated: 2026-09-25
+updated: 2026-09-28
 tags: [spec, ui, design-system]
 ---
 
@@ -58,6 +58,11 @@ The requirements below are the *fixed* layer: later versions (v1.1 lobbies, v2.0
 ### motion
 - **UI-R25** Motion is informational (deal, bet to pot, pot to winner, turn change) and short (≤ 300ms for UI state changes; longer only for travel across the table). Under `prefers-reduced-motion: reduce`, transforms are replaced by fades or instant changes.
 - **UI-R26** Nothing flashes more than 3 times per second.
+- **UI-R37** (owner, 2026-09-28, from [[playtest_feedback_2026_09_28]]) The table MUST be followable by someone watching it for the first time: **dealing**, every **bet / raise / call**, and the **showdown** are each shown as a distinct, paced step — the acting seat and the amount are highlighted long enough to read before the next event is shown. Events are never shown faster than they can be read, even when they arrive together. Exact durations are not set yet (see open questions); UI-R25's 300ms cap applies to UI state changes, not to this pacing.
+
+### sound & vibration
+- **UI-R38** (owner, 2026-09-28) v1.0 has **sound effects** and **vibration**, both **on by default**. **No music.** Which events get a sound or a vibration is not decided yet (see open questions).
+- **UI-R39** Sound and vibration only repeat information that is also visible; nothing is signalled by sound or vibration alone. Sounds MUST NOT evoke money (no coin or cash-register sounds — UI-R1).
 
 ### accessibility beyond colour
 - **UI-R27** Cards, seats and actions have screen-reader names (e.g. "Queen of diamonds", "tomas.v, 850 chips, bet 60"). When it's the player's turn, it is announced in a polite live region and focus moves to the action bar; focus is always visible. Keyboard shortcuts MUST need a modifier or be off by default (WCAG 2.1.4).
@@ -356,6 +361,12 @@ Not a fairness spec; the relevant failure modes are *player* harm, not cheating:
 - `design-reviewer` pass on the Claude Design output before this spec moves to `review`.
 
 ## open questions
+- **Pacing durations (UI-R37)** — how long each step is held (deal, action highlight, showdown reveal, pot award). To be found by trying values with testers, then written into UI-R37.
+- **Pacing vs the turn timer** — if the client plays events in sequence, the 30s turn timer must not start counting for a player before they can see it is their turn. Implementation question for [[v1_0_casual_multiplayer_poker]].
+- **Sound & vibration events (UI-R38)** — which events get them (your turn, deal, bet, win, timer urgent?), and whether there is an off switch in v1.0. "On by default" implies one; not confirmed by the owner.
+- **Vibration support** — verified 2026-09-28 (https://caniuse.com/vibration, MDN `Navigator.vibrate`): the web Vibration API is **not supported on iOS Safari** in any version; it works in Chrome for Android. Vibration is therefore Android-only. Browsers keep sound suspended until the player's first tap (Chrome autoplay policy, WebKit). Owner has not yet said whether Android-only vibration is acceptable.
+- **Seat border figure** — the "seat border on felt (1.13:1)" in *starting palette* describes the starting palette, not the code: measured in `packages/ui` on 2026-09-28 the seat border on felt is 3.52:1 and the seat fill against felt 1.32:1.
+- **Chips (UI-R4)** — players asked for chip visuals; owner keeps UI-R4 and UI-R1 **for now** (2026-09-28). Revisit if feedback repeats.
 - **Pre-actions** ("check/fold", "call any" boxes while waiting): common in online poker, not in v1.0 scope. Left out unless the owner adds them — UI-R22 applies if they are.
 - **Signature element** — owner picks from Claude Design's 2–3 options.
 - **Suit colours** that pass UI-R9's SHOULD under all three simulations — none found yet; iterate in Claude Design.
